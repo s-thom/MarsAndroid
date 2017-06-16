@@ -1,16 +1,12 @@
 package kiwi.sthom.mars;
 
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.microsoft.connecteddevices.ConnectedDevicesException;
-import com.microsoft.connecteddevices.IRemoteSystemDiscoveryListener;
 import com.microsoft.connecteddevices.RemoteSystem;
-import com.microsoft.connecteddevices.RemoteSystemDiscovery;
 
 import kiwi.sthom.mars.DeviceListFragment.OnDeviceSelectedListener;
 
@@ -33,7 +29,7 @@ public class DeviceRecyclerViewAdapter extends RecyclerView.Adapter<DeviceRecycl
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
-            .inflate(R.layout.fragment_device, parent, false);
+            .inflate(R.layout.list_item_device, parent, false);
         return new ViewHolder(view);
     }
 
