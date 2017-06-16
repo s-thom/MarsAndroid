@@ -3,6 +3,8 @@ package kiwi.sthom.mars;
 import android.content.Context;
 import android.os.Bundle;
 import android.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v4.widget.SwipeRefreshLayout.OnRefreshListener;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -10,24 +12,27 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import kiwi.sthom.mars.dummy.DummyContent;
-import kiwi.sthom.mars.dummy.DummyContent.DummyItem;
+import com.microsoft.connecteddevices.RemoteSystem;
 
 import java.util.List;
+
+import kiwi.sthom.mars.dummy.DummyContent;
 
 /**
  * A fragment representing a list of Items.
  * <p/>
- * Activities containing this fragment MUST implement the {@link OnListFragmentInteractionListener}
+ * Activities containing this fragment MUST implement the {@link OnDeviceSelectedListener}
  * interface.
  */
-public class DeviceListFragment extends Fragment {
-
-    // TODO: Customize parameter argument names
+public class DeviceListFragment extends Fragment implements OnRefreshListener {
     private static final String ARG_COLUMN_COUNT = "column-count";
-    // TODO: Customize parameters
-    private int mColumnCount = 2;
-    private OnListFragmentInteractionListener mListener;
+
+    private OnDeviceSelectedListener _listener;
+    private SwipeRefreshLayout _swiper = null;
+    private DeviceRecyclerViewAdapter _adapter = null;
+
+    private List<RemoteSystem> _devices = null;
+    private int _columnCount = 2;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -36,8 +41,6 @@ public class DeviceListFragment extends Fragment {
     public DeviceListFragment() {
     }
 
-    // TODO: Customize parameter initialization
-    @SuppressWarnings("unused")
     public static DeviceListFragment newInstance(int columnCount) {
         DeviceListFragment fragment = new DeviceListFragment();
         Bundle args = new Bundle();
@@ -51,7 +54,7 @@ public class DeviceListFragment extends Fragment {
         super.onCreate(savedInstanceState);
 
         if (getArguments() != null) {
-            mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
+            _columnCount = getArguments().getInt(ARG_COLUMN_COUNT);
         }
     }
 
@@ -60,17 +63,20 @@ public class DeviceListFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_device_list, container, false);
 
-        // Set the adapter
-        if (view instanceof RecyclerView) {
-            Context context = view.getContext();
-            RecyclerView recyclerView = (RecyclerView) view;
-            if (mColumnCount <= 1) {
-                recyclerView.setLayoutManager(new LinearLayoutManager(context));
-            } else {
-                recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
-            }
-            recyclerView.setAdapter(new DeviceRecyclerViewAdapter(DummyContent.ITEMS, mListener));
+        _swiper = (SwipeRefreshLayout) view;
+        _swiper.setOnRefreshListener(this);
+
+        // Set RecyclerView adapter and layout manager
+        RecyclerView list = view.findViewById(R.id.list);
+        Context context = view.getContext();
+        if (_columnCount <= 1) {
+            list.setLayoutManager(new LinearLayoutManager(context));
+        } else {
+            list.setLayoutManager(new GridLayoutManager(context, _columnCount));
         }
+        _adapter = new DeviceRecyclerViewAdapter(_listener);
+        list.setAdapter(_adapter);
+
         return view;
     }
 
@@ -78,18 +84,36 @@ public class DeviceListFragment extends Fragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (context instanceof OnListFragmentInteractionListener) {
-            mListener = (OnListFragmentInteractionListener) context;
+        if (context instanceof OnDeviceSelectedListener) {
+            _listener = (OnDeviceSelectedListener) context;
         } else {
             throw new RuntimeException(context.toString()
-                + " must implement OnListFragmentInteractionListener");
+                + " must implement OnDeviceSelectedListener");
         }
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
-        mListener = null;
+        _listener = null;
+    }
+
+    @Override
+    public void onRefresh() {
+        // TODO: 16/06/2017 Do something on refresh
+        _swiper.setRefreshing(false);
+    }
+
+    void addDevice(RemoteSystem device) {
+        _adapter.addDevice(device);
+    }
+
+    void removeDevice(String id) {
+        _adapter.removeDevice(id);
+    }
+
+    void updateDevice(RemoteSystem device) {
+        _adapter.updateDevice(device);
     }
 
     /**
@@ -97,13 +121,8 @@ public class DeviceListFragment extends Fragment {
      * fragment to allow an interaction in this fragment to be communicated
      * to the activity and potentially other fragments contained in that
      * activity.
-     * <p/>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
      */
-    public interface OnListFragmentInteractionListener {
-        // TODO: Update argument type and name
-        void onListFragmentInteraction(DummyItem item);
+    public interface OnDeviceSelectedListener {
+        void OnDeviceSelected(RemoteSystem device);
     }
 }

@@ -6,24 +6,23 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import kiwi.sthom.mars.DeviceListFragment.OnListFragmentInteractionListener;
-import kiwi.sthom.mars.dummy.DummyContent.DummyItem;
+import com.microsoft.connecteddevices.RemoteSystem;
+
+import kiwi.sthom.mars.DeviceListFragment.OnDeviceSelectedListener;
 
 import java.util.List;
 
 /**
- * {@link RecyclerView.Adapter} that can display a {@link DummyItem} and makes a call to the
- * specified {@link OnListFragmentInteractionListener}.
- * TODO: Replace the implementation with code for your data type.
+ * {@link RecyclerView.Adapter} that can display a {@link RemoteSystem} and makes a call to the
+ * specified {@link OnDeviceSelectedListener}.
  */
 public class DeviceRecyclerViewAdapter extends RecyclerView.Adapter<DeviceRecyclerViewAdapter.ViewHolder> {
 
-    private final List<DummyItem> mValues;
-    private final OnListFragmentInteractionListener mListener;
+    private List<RemoteSystem> _devices = null;
+    private final DeviceListFragment.OnDeviceSelectedListener _listener;
 
-    public DeviceRecyclerViewAdapter(List<DummyItem> items, OnListFragmentInteractionListener listener) {
-        mValues = items;
-        mListener = listener;
+    public DeviceRecyclerViewAdapter(OnDeviceSelectedListener listener) {
+        _listener = listener;
     }
 
     @Override
@@ -35,32 +34,65 @@ public class DeviceRecyclerViewAdapter extends RecyclerView.Adapter<DeviceRecycl
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
-        holder.mItem = mValues.get(position);
-        holder.mIdView.setText(mValues.get(position).id);
-        holder.mContentView.setText(mValues.get(position).content);
+        holder.mItem = _devices.get(position);
+        holder.mIdView.setText(_devices.get(position).getDisplayName());
+        holder.mContentView.setText(_devices.get(position).getKind().getValue());
 
-        holder.mView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (null != mListener) {
-                    // Notify the active callbacks interface (the activity, if the
-                    // fragment is attached to one) that an item has been selected.
-                    mListener.onListFragmentInteraction(holder.mItem);
-                }
+        holder.mView.setOnClickListener((View v) -> {
+            if (null != _listener) {
+                // Notify the active callbacks interface (the activity, if the
+                // fragment is attached to one) that an item has been selected.
+                _listener.OnDeviceSelected(holder.mItem);
             }
         });
     }
 
     @Override
     public int getItemCount() {
-        return mValues.size();
+        if (_devices == null) {
+            return 0;
+        }
+        return _devices.size();
+    }
+
+    void addDevice(RemoteSystem device) {
+        _devices.add(device);
+        notifyDataSetChanged();
+    }
+
+    void removeDevice(String id) {
+        RemoteSystem toRemove = null;
+        for (RemoteSystem device : _devices) {
+            if (device.getId() == id) {
+                toRemove = device;
+                break;
+            }
+        }
+        if (toRemove != null) {
+            _devices.remove(toRemove);
+            notifyDataSetChanged();
+        }
+    }
+
+    void updateDevice(RemoteSystem device) {
+        int index = -1;
+        for (RemoteSystem d : _devices) {
+            if (d.getId().equals(device.getId())) {
+                index = _devices.indexOf(d);
+                break;
+            }
+        }
+        if (index != -1) {
+            _devices.set(index, device);
+            notifyItemChanged(index);
+        }
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         public final View mView;
         public final TextView mIdView;
         public final TextView mContentView;
-        public DummyItem mItem;
+        public RemoteSystem mItem;
 
         public ViewHolder(View view) {
             super(view);

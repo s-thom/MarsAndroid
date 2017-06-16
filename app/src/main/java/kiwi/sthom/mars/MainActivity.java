@@ -13,14 +13,20 @@ import android.widget.TextView;
 
 import com.microsoft.connecteddevices.IAuthCodeProvider;
 import com.microsoft.connecteddevices.IPlatformInitializationHandler;
+import com.microsoft.connecteddevices.IRemoteSystemDiscoveryListener;
 import com.microsoft.connecteddevices.Platform;
 import com.microsoft.connecteddevices.PlatformInitializationStatus;
+import com.microsoft.connecteddevices.RemoteSystem;
+import com.microsoft.connecteddevices.RemoteSystemDiscovery;
 
-public class MainActivity extends AppCompatActivity
-    implements OAuthFragment.OnOAuthCodeListener
+public class MainActivity extends AppCompatActivity implements
+    OAuthFragment.OnOAuthCodeListener,
+    DeviceListFragment.OnDeviceSelectedListener
 {
     private static final int STATE_INIT = 974;
     private static final int STATE_OAUTH = 662;
+
+    private DeviceListFragment _deviceFragment = null;
 
     private Platform.IAuthCodeHandler _authHandler = null;
 
@@ -74,6 +80,33 @@ public class MainActivity extends AppCompatActivity
 
             }
         });
+
+        // TODO: 16/06/2017 Decide column count more intelligently
+        _deviceFragment = DeviceListFragment.newInstance(2);
+
+        RemoteSystemDiscovery disc = new RemoteSystemDiscovery.Builder()
+            .setListener(new IRemoteSystemDiscoveryListener() {
+                @Override
+                public void onRemoteSystemAdded(RemoteSystem remoteSystem) {
+                    _deviceFragment.addDevice(remoteSystem);
+                }
+
+                @Override
+                public void onRemoteSystemUpdated(RemoteSystem remoteSystem) {
+                    _deviceFragment.updateDevice(remoteSystem);
+                }
+
+                @Override
+                public void onRemoteSystemRemoved(String s) {
+                    _deviceFragment.removeDevice(s);
+                }
+
+                @Override
+                public void onComplete() {
+                    // TODO: 16/06/2017 Something here? 
+                }
+            })
+            .getResult();
     }
 
     @Override
@@ -87,6 +120,11 @@ public class MainActivity extends AppCompatActivity
         } else {
             Log.d("OAUTH", "Got auth code, but handler was null");
         }
+    }
+
+    @Override
+    public void OnDeviceSelected(RemoteSystem device) {
+        Log.d("TEST", device.getDisplayName());
     }
 
     private void setNavVisible(boolean visibility) {
