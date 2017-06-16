@@ -92,6 +92,7 @@ public class DeviceListFragment extends Fragment implements OnRefreshListener {
                 @Override
                 public void onRemoteSystemAdded(RemoteSystem remoteSystem) {
                     _adapter.addDevice(remoteSystem);
+                    DeviceStorage.addDevice(remoteSystem);
                 }
 
                 @Override
@@ -102,6 +103,7 @@ public class DeviceListFragment extends Fragment implements OnRefreshListener {
                 @Override
                 public void onRemoteSystemRemoved(String s) {
                     _adapter.removeDevice(s);
+                    DeviceStorage.removeDevice(s);
                 }
 
                 @Override
