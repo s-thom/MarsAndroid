@@ -27,7 +27,7 @@
         <activity
             android:name=".LaunchUriActivity"
             android:label="@string/title_activity_launch_uri"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:theme="@android:style/Theme.NoDisplay">
             <intent-filter
                 android:label="@string/share_title">
                 <action android:name="android.intent.action.SEND" />
