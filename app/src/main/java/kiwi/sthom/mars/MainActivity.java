@@ -23,6 +23,7 @@ public class MainActivity extends AppCompatActivity implements
     private static final int STATE_OAUTH = 662;
     private static final int STATE_DEVICES = 46;
     private static final int STATE_LOADING = 963;
+    private static final int STATE_DEVICE_VIEW = 568;
 
     private DeviceListFragment _deviceFrag = null;
 
@@ -107,6 +108,9 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     public void OnDeviceSelected(RemoteSystem device) {
         Log.d("TEST", device.getDisplayName());
+
+        setFragment(DeviceFragment.newInstance(device));
+        setState(STATE_DEVICE_VIEW);
     }
 
     private void setNavVisible(boolean visibility) {
@@ -148,6 +152,9 @@ public class MainActivity extends AppCompatActivity implements
             case STATE_LOADING:
                 setFragment(LoadingFragment.newInstance());
                 setNavVisible(false);
+                break;
+            case STATE_DEVICE_VIEW:
+                setNavVisible(true);
                 break;
             default:
                 Log.d("STATE", "Unknown state " + newState);
