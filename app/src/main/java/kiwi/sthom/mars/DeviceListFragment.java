@@ -40,7 +40,6 @@ public class DeviceListFragment extends Fragment implements OnRefreshListener {
     private SwipeRefreshLayout _swiper = null;
     private DeviceRecyclerViewAdapter _adapter = null;
 
-    private List<RemoteSystem> _devices = null;
     private int _columnCount = 2;
 
     /**
@@ -74,6 +73,8 @@ public class DeviceListFragment extends Fragment implements OnRefreshListener {
 
         _swiper = (SwipeRefreshLayout) view;
         _swiper.setOnRefreshListener(this);
+        Log.d("a", "start");
+        _swiper.setRefreshing(true);
 
         // Set RecyclerView adapter and layout manager
         RecyclerView list = view.findViewById(R.id.list);
@@ -106,6 +107,8 @@ public class DeviceListFragment extends Fragment implements OnRefreshListener {
                 @Override
                 public void onComplete() {
                     // TODO: 16/06/2017 Something here?
+                    Log.d("a", "complete");
+                    _swiper.setRefreshing(false);
                 }
             });
             // TODO: 17/06/2017 filtering options?

@@ -22,6 +22,7 @@ public class MainActivity extends AppCompatActivity implements
     private static final int STATE_INIT = 974;
     private static final int STATE_OAUTH = 662;
     private static final int STATE_DEVICES = 46;
+    private static final int STATE_LOADING = 963;
 
     private DeviceListFragment _deviceFrag = null;
 
@@ -88,6 +89,8 @@ public class MainActivity extends AppCompatActivity implements
                 }
             }
         });
+
+        setState(STATE_LOADING);
     }
 
     @Override
@@ -96,8 +99,6 @@ public class MainActivity extends AppCompatActivity implements
             _authHandler.onAuthCodeFetched(string);
             // Reset auth handler, in case anything happens
             _authHandler = null;
-
-            setNavVisible(true);
         } else {
             Log.d("OAUTH", "Got auth code, but handler was null");
         }
@@ -109,25 +110,31 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     private void setNavVisible(boolean visibility) {
-        View nav = findViewById(R.id.main_nav);
-        if (visibility) {
-            nav.setVisibility(View.VISIBLE);
-        } else {
-            nav.setVisibility(View.GONE);
-        }
+        runOnUiThread(() -> {
+            View nav = findViewById(R.id.main_nav);
+            if (visibility) {
+                nav.setVisibility(View.VISIBLE);
+            } else {
+                nav.setVisibility(View.GONE);
+            }
+        });
     }
 
     private void setFragment(Fragment frag) {
-        getFragmentManager()
-            .beginTransaction()
-            .replace(R.id.main_frag_container, frag)
-            .commit();
+        runOnUiThread(() ->
+            getFragmentManager()
+                .beginTransaction()
+                .replace(R.id.main_frag_container, frag)
+                .commit()
+        );
     }
 
     private void setState(int newState) {
         if (_state == newState) {
             return;
         }
+
+        Log.d("STATE", "Setting state: " + newState);
 
         switch (newState) {
             case STATE_OAUTH:
@@ -136,6 +143,11 @@ public class MainActivity extends AppCompatActivity implements
             case STATE_DEVICES:
                 // TODO: 16/06/2017 Decide column count more intelligently
                 setFragment(_deviceFrag);
+                setNavVisible(true);
+                break;
+            case STATE_LOADING:
+                setFragment(LoadingFragment.newInstance());
+                setNavVisible(false);
                 break;
             default:
                 Log.d("STATE", "Unknown state " + newState);
