@@ -28,7 +28,26 @@
             android:name=".LaunchUriActivity"
             android:label="@string/title_activity_launch_uri"
             android:theme="@style/AppTheme.NoActionBar">
+            <intent-filter
+                android:label="@string/share_title">
+                <action android:name="android.intent.action.SEND" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="text/plain"/>
+            </intent-filter>
+            <meta-data
+                android:name="android.service.chooser.chooser_target_service"
+                android:value=".DeviceChooserService" />
         </activity>
+
+        <service
+            android:name=".DeviceChooserService"
+            android:enabled="true"
+            android:exported="true"
+            android:permission="android.permission.BIND_CHOOSER_TARGET_SERVICE">
+            <intent-filter>
+                <action android:name="android.service.chooser.ChooserTargetService" />
+            </intent-filter>
+        </service>
     </application>
 
 </manifest>

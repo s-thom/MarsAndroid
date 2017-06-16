@@ -2,7 +2,9 @@ package kiwi.sthom.mars;
 
 import com.microsoft.connecteddevices.RemoteSystem;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -30,5 +32,9 @@ class DeviceStorage {
         } else {
             return null;
         }
+    }
+
+    static List<RemoteSystem> getAll() {
+        return new ArrayList<>(_devices.values());
     }
 }
