@@ -1,15 +1,20 @@
 package kiwi.sthom.mars;
 
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.microsoft.connecteddevices.ConnectedDevicesException;
+import com.microsoft.connecteddevices.IRemoteSystemDiscoveryListener;
 import com.microsoft.connecteddevices.RemoteSystem;
+import com.microsoft.connecteddevices.RemoteSystemDiscovery;
 
 import kiwi.sthom.mars.DeviceListFragment.OnDeviceSelectedListener;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -18,7 +23,7 @@ import java.util.List;
  */
 public class DeviceRecyclerViewAdapter extends RecyclerView.Adapter<DeviceRecyclerViewAdapter.ViewHolder> {
 
-    private List<RemoteSystem> _devices = null;
+    private List<RemoteSystem> _devices = new ArrayList<>();
     private final DeviceListFragment.OnDeviceSelectedListener _listener;
 
     public DeviceRecyclerViewAdapter(OnDeviceSelectedListener listener) {

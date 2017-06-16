@@ -4,20 +4,16 @@ import android.app.Fragment;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
-import android.support.design.widget.BottomNavigationView.OnNavigationItemSelectedListener;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.TextView;
 
 import com.microsoft.connecteddevices.IAuthCodeProvider;
 import com.microsoft.connecteddevices.IPlatformInitializationHandler;
-import com.microsoft.connecteddevices.IRemoteSystemDiscoveryListener;
 import com.microsoft.connecteddevices.Platform;
 import com.microsoft.connecteddevices.PlatformInitializationStatus;
 import com.microsoft.connecteddevices.RemoteSystem;
-import com.microsoft.connecteddevices.RemoteSystemDiscovery;
 
 public class MainActivity extends AppCompatActivity implements
     OAuthFragment.OnOAuthCodeListener,
@@ -25,8 +21,7 @@ public class MainActivity extends AppCompatActivity implements
 {
     private static final int STATE_INIT = 974;
     private static final int STATE_OAUTH = 662;
-
-    private DeviceListFragment _deviceFragment = null;
+    private static final int STATE_DEVICES = 46;
 
     private Platform.IAuthCodeHandler _authHandler = null;
 
@@ -80,33 +75,6 @@ public class MainActivity extends AppCompatActivity implements
 
             }
         });
-
-        // TODO: 16/06/2017 Decide column count more intelligently
-        _deviceFragment = DeviceListFragment.newInstance(2);
-
-        RemoteSystemDiscovery disc = new RemoteSystemDiscovery.Builder()
-            .setListener(new IRemoteSystemDiscoveryListener() {
-                @Override
-                public void onRemoteSystemAdded(RemoteSystem remoteSystem) {
-                    _deviceFragment.addDevice(remoteSystem);
-                }
-
-                @Override
-                public void onRemoteSystemUpdated(RemoteSystem remoteSystem) {
-                    _deviceFragment.updateDevice(remoteSystem);
-                }
-
-                @Override
-                public void onRemoteSystemRemoved(String s) {
-                    _deviceFragment.removeDevice(s);
-                }
-
-                @Override
-                public void onComplete() {
-                    // TODO: 16/06/2017 Something here? 
-                }
-            })
-            .getResult();
     }
 
     @Override
@@ -117,6 +85,7 @@ public class MainActivity extends AppCompatActivity implements
             _authHandler = null;
 
             setNavVisible(true);
+            setState(STATE_DEVICES);
         } else {
             Log.d("OAUTH", "Got auth code, but handler was null");
         }
@@ -152,6 +121,9 @@ public class MainActivity extends AppCompatActivity implements
             case STATE_OAUTH:
                 setNavVisible(false);
                 break;
+            case STATE_DEVICES:
+                // TODO: 16/06/2017 Decide column count more intelligently
+                setFragment(DeviceListFragment.newInstance(2));
             default:
                 Log.d("STATE", "Unknown state " + newState);
         }

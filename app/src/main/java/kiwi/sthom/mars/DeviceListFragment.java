@@ -8,15 +8,17 @@ import android.support.v4.widget.SwipeRefreshLayout.OnRefreshListener;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.microsoft.connecteddevices.ConnectedDevicesException;
+import com.microsoft.connecteddevices.IRemoteSystemDiscoveryListener;
 import com.microsoft.connecteddevices.RemoteSystem;
+import com.microsoft.connecteddevices.RemoteSystemDiscovery;
 
 import java.util.List;
-
-import kiwi.sthom.mars.dummy.DummyContent;
 
 /**
  * A fragment representing a list of Items.
@@ -77,6 +79,36 @@ public class DeviceListFragment extends Fragment implements OnRefreshListener {
         _adapter = new DeviceRecyclerViewAdapter(_listener);
         list.setAdapter(_adapter);
 
+        RemoteSystemDiscovery disc = new RemoteSystemDiscovery.Builder()
+            .setListener(new IRemoteSystemDiscoveryListener() {
+                @Override
+                public void onRemoteSystemAdded(RemoteSystem remoteSystem) {
+                    _adapter.addDevice(remoteSystem);
+                }
+
+                @Override
+                public void onRemoteSystemUpdated(RemoteSystem remoteSystem) {
+                    _adapter.updateDevice(remoteSystem);
+                }
+
+                @Override
+                public void onRemoteSystemRemoved(String s) {
+                    _adapter.removeDevice(s);
+                }
+
+                @Override
+                public void onComplete() {
+                    // TODO: 16/06/2017 Something here?
+                }
+            })
+            .getResult();
+
+        try {
+            disc.start();
+        } catch (ConnectedDevicesException ex) {
+            Log.e("CDE", ex.getLocalizedMessage());
+        }
+
         return view;
     }
 
@@ -102,18 +134,6 @@ public class DeviceListFragment extends Fragment implements OnRefreshListener {
     public void onRefresh() {
         // TODO: 16/06/2017 Do something on refresh
         _swiper.setRefreshing(false);
-    }
-
-    void addDevice(RemoteSystem device) {
-        _adapter.addDevice(device);
-    }
-
-    void removeDevice(String id) {
-        _adapter.removeDevice(id);
-    }
-
-    void updateDevice(RemoteSystem device) {
-        _adapter.updateDevice(device);
     }
 
     /**
