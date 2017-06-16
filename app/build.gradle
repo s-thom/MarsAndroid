@@ -1,7 +1,21 @@
 apply plugin: 'com.android.application'
 
+def static getSecrets() {
+    Properties props = new Properties()
+    props.load(new FileInputStream(new File('secrets.properties')))
+    return props
+}
+
 android {
-    compileSdkVersion 25
+    signingConfigs {
+        config {
+            keyAlias getSecrets()['SIGN_KEY_ALIAS']
+            storeFile file(getSecrets()['SIGN_STORE_PATH'])
+            storePassword getSecrets()['SIGN_STORE_PASSWORD']
+            keyPassword getSecrets()['SIGN_KEY_PASSWORD']
+        }
+    }
+    compileSdkVersion 26
     buildToolsVersion "26.0.0"
     defaultConfig {
         applicationId "kiwi.sthom.mars"
@@ -15,7 +29,17 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.config
+            buildConfigField "String", "MS_CLIENT_ID", "\"" + getSecrets()['MS_CLIENT_ID'] + "\""
         }
+        debug {
+            signingConfig signingConfigs.config
+            buildConfigField "String", "MS_CLIENT_ID", "\"" + getSecrets()['MS_CLIENT_ID'] + "\""
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
     }
 }
 
@@ -24,8 +48,8 @@ dependencies {
     androidTestImplementation('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
-    implementation 'com.android.support:appcompat-v7:25.4.0'
+    implementation 'com.android.support:appcompat-v7:26.0.0-beta2'
     testImplementation 'junit:junit:4.12'
-    implementation 'com.android.support:design:25.4.0'
+    implementation 'com.android.support:design:26.0.0-beta2'
     implementation 'com.android.support.constraint:constraint-layout:1.0.2'
 }
