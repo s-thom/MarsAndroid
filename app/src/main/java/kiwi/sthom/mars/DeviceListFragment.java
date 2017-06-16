@@ -1,6 +1,7 @@
 package kiwi.sthom.mars;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -17,7 +18,13 @@ import com.microsoft.connecteddevices.ConnectedDevicesException;
 import com.microsoft.connecteddevices.IRemoteSystemDiscoveryListener;
 import com.microsoft.connecteddevices.RemoteSystem;
 import com.microsoft.connecteddevices.RemoteSystemDiscovery;
+import com.microsoft.connecteddevices.RemoteSystemDiscoveryType;
+import com.microsoft.connecteddevices.RemoteSystemDiscoveryTypeFilter;
+import com.microsoft.connecteddevices.RemoteSystemKindFilter;
+import com.microsoft.connecteddevices.RemoteSystemKinds;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -79,7 +86,7 @@ public class DeviceListFragment extends Fragment implements OnRefreshListener {
         _adapter = new DeviceRecyclerViewAdapter(_listener);
         list.setAdapter(_adapter);
 
-        RemoteSystemDiscovery disc = new RemoteSystemDiscovery.Builder()
+        RemoteSystemDiscovery.Builder discBuilder = new RemoteSystemDiscovery.Builder()
             .setListener(new IRemoteSystemDiscoveryListener() {
                 @Override
                 public void onRemoteSystemAdded(RemoteSystem remoteSystem) {
@@ -100,11 +107,25 @@ public class DeviceListFragment extends Fragment implements OnRefreshListener {
                 public void onComplete() {
                     // TODO: 16/06/2017 Something here?
                 }
-            })
-            .getResult();
+            });
+            // TODO: 17/06/2017 filtering options?
+
+        RemoteSystemDiscovery disc = null;
 
         try {
-            disc.start();
+            disc = discBuilder.getResult();
+        } catch (UnsatisfiedLinkError ex) {
+            // If this fragment is created before the auth code is actually saved,
+            // then lots of weird stuff happens. This is to help prevent weird stuff.
+            getActivity().recreate();
+        }
+
+        try {
+            if (disc != null) {
+                disc.start();
+            } else {
+                Log.d("ERR", "Discovery was null");
+            }
         } catch (ConnectedDevicesException ex) {
             Log.e("CDE", ex.getLocalizedMessage());
         }

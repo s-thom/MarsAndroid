@@ -23,6 +23,8 @@ public class MainActivity extends AppCompatActivity implements
     private static final int STATE_OAUTH = 662;
     private static final int STATE_DEVICES = 46;
 
+    private DeviceListFragment _deviceFrag = null;
+
     private Platform.IAuthCodeHandler _authHandler = null;
 
     private int _state = STATE_INIT;
@@ -67,12 +69,23 @@ public class MainActivity extends AppCompatActivity implements
             new IPlatformInitializationHandler() {
             @Override
             public void onDone() {
+                Log.d("P", "Platform done");
 
+                if (_deviceFrag == null) {
+                    _deviceFrag = DeviceListFragment.newInstance(2);
+                }
+
+                setState(STATE_DEVICES);
             }
 
             @Override
             public void onError(PlatformInitializationStatus platformInitializationStatus) {
-
+                switch (platformInitializationStatus) {
+                    case PLATFORM_FAILURE:
+                        Log.e("P", "Error initializing platform");
+                    case TOKEN_ERROR:
+                        Log.e("P", "Error refreshing tokens");
+                }
             }
         });
     }
@@ -85,7 +98,6 @@ public class MainActivity extends AppCompatActivity implements
             _authHandler = null;
 
             setNavVisible(true);
-            setState(STATE_DEVICES);
         } else {
             Log.d("OAUTH", "Got auth code, but handler was null");
         }
@@ -123,7 +135,8 @@ public class MainActivity extends AppCompatActivity implements
                 break;
             case STATE_DEVICES:
                 // TODO: 16/06/2017 Decide column count more intelligently
-                setFragment(DeviceListFragment.newInstance(2));
+                setFragment(_deviceFrag);
+                break;
             default:
                 Log.d("STATE", "Unknown state " + newState);
         }
