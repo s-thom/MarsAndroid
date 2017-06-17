@@ -1,6 +1,7 @@
 package kiwi.sthom.mars;
 
 import android.app.Fragment;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
@@ -87,6 +88,8 @@ public class MainActivity extends AppCompatActivity implements
                 }
 
                 setState(STATE_DEVICES);
+
+                startService(new Intent(getApplicationContext(), DevicesService.class));
             }
 
             @Override

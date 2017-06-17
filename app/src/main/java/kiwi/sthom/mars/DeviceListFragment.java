@@ -33,7 +33,7 @@ import java.util.List;
  * Activities containing this fragment MUST implement the {@link OnDeviceSelectedListener}
  * interface.
  */
-public class DeviceListFragment extends Fragment implements OnRefreshListener {
+public class DeviceListFragment extends Fragment implements OnRefreshListener, DeviceStorage.OnUpdateListener {
     private static final String ARG_COLUMN_COUNT = "column-count";
 
     private OnDeviceSelectedListener _listener;
@@ -87,53 +87,7 @@ public class DeviceListFragment extends Fragment implements OnRefreshListener {
         _adapter = new DeviceRecyclerViewAdapter(_listener);
         list.setAdapter(_adapter);
 
-        RemoteSystemDiscovery.Builder discBuilder = new RemoteSystemDiscovery.Builder()
-            .setListener(new IRemoteSystemDiscoveryListener() {
-                @Override
-                public void onRemoteSystemAdded(RemoteSystem remoteSystem) {
-                    _adapter.addDevice(remoteSystem);
-                    DeviceStorage.addDevice(remoteSystem);
-                }
-
-                @Override
-                public void onRemoteSystemUpdated(RemoteSystem remoteSystem) {
-                    _adapter.updateDevice(remoteSystem);
-                }
-
-                @Override
-                public void onRemoteSystemRemoved(String s) {
-                    _adapter.removeDevice(s);
-                    DeviceStorage.removeDevice(s);
-                }
-
-                @Override
-                public void onComplete() {
-                    // TODO: 16/06/2017 Something here?
-                    Log.d("a", "complete");
-                    _swiper.setRefreshing(false);
-                }
-            });
-            // TODO: 17/06/2017 filtering options?
-
-        RemoteSystemDiscovery disc = null;
-
-        try {
-            disc = discBuilder.getResult();
-        } catch (UnsatisfiedLinkError ex) {
-            // If this fragment is created before the auth code is actually saved,
-            // then lots of weird stuff happens. This is to help prevent weird stuff.
-            getActivity().recreate();
-        }
-
-        try {
-            if (disc != null) {
-                disc.start();
-            } else {
-                Log.d("ERR", "Discovery was null");
-            }
-        } catch (ConnectedDevicesException ex) {
-            Log.e("CDE", ex.getLocalizedMessage());
-        }
+        DeviceStorage.addListener(this);
 
         return view;
     }
@@ -153,12 +107,21 @@ public class DeviceListFragment extends Fragment implements OnRefreshListener {
     @Override
     public void onDetach() {
         super.onDetach();
+        DeviceStorage.removeListener(this);
         _listener = null;
     }
 
     @Override
     public void onRefresh() {
         // TODO: 16/06/2017 Do something on refresh
+        _swiper.setRefreshing(false);
+    }
+
+    @Override
+    public void onDevicesUpdated(List<RemoteSystem> devices) {
+        Log.d("a", "got devices");
+
+        _adapter.setDevices(devices);
         _swiper.setRefreshing(false);
     }
 
