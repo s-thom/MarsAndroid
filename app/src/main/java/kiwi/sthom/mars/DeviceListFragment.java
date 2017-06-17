@@ -71,7 +71,7 @@ public class DeviceListFragment extends Fragment implements OnRefreshListener, D
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_device_list, container, false);
 
-        _swiper = (SwipeRefreshLayout) view;
+        _swiper = view.findViewById(R.id.device_list_swiper);
         _swiper.setOnRefreshListener(this);
         Log.d("a", "start");
         _swiper.setRefreshing(true);

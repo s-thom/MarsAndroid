@@ -22,6 +22,8 @@ public class LaunchUriActivity extends Activity implements DeviceListFragment.On
     String _url = null;
     String _title = null;
 
+    AlertDialog _dialog = null;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -65,6 +67,8 @@ public class LaunchUriActivity extends Activity implements DeviceListFragment.On
             _url,
             _title
         );
+
+        _dialog.dismiss();
     }
 
     void showDialog() {
@@ -81,15 +85,16 @@ public class LaunchUriActivity extends Activity implements DeviceListFragment.On
         list.setLayoutManager(layoutManager);
         list.setAdapter(adapter);
 
-        new AlertDialog.Builder(this)
+        _dialog = new AlertDialog.Builder(this)
             .setTitle(R.string.send_choose_destination)
             .setView(view)
             .setCancelable(true)
             .setOnCancelListener((DialogInterface d) ->
                 this.finish()
             )
-            .create()
-            .show();
+            .create();
+
+        _dialog.show();
     }
 
     void sendUrl(RemoteSystem device, String url, String pageName) {
