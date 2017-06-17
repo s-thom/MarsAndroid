@@ -4,6 +4,8 @@
     <string name="title_dashboard">Dashboard</string>
     <string name="title_notifications">Notifications</string>
 
+    <string name="device_list_title">Connected Devices</string>
+
     <string name="device_name_default">NO NAME</string>
     <string name="device_type_default">NO TYPE</string>
     <string name="device_icon_description">Icon for your device</string>
