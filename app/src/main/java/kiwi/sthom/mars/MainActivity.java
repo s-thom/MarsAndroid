@@ -25,10 +25,12 @@ public class MainActivity extends AppCompatActivity implements
     private static final int STATE_LOADING = 963;
     private static final int STATE_DEVICE_VIEW = 568;
 
-    private DeviceListFragment _deviceFrag = null;
     private static final int NAV_DEVICES = R.id.nav_device_list;
     private static final int NAV_DEVICE = R.id.nav_device;
     private static final int NAV_SETTINGS = R.id.nav_settings;
+
+    private DeviceListFragment _deviceListFrag = null;
+    private DeviceFragment _deviceFrag = null;
 
     private Platform.IAuthCodeHandler _authHandler = null;
 
@@ -42,18 +44,22 @@ public class MainActivity extends AppCompatActivity implements
         BottomNavigationView navigation = findViewById(R.id.main_nav);
         navigation.setOnNavigationItemSelectedListener((@NonNull MenuItem item) -> {
             switch (item.getItemId()) {
-                case R.id.navigation_home:
-//                mTextMessage.setText(R.string.title_home);
+                case R.id.nav_device_list:
+                    setFragment(_deviceListFrag);
                     return true;
-                case R.id.navigation_dashboard:
-//                mTextMessage.setText(R.string.title_dashboard);
+                case R.id.nav_device:
+                    if (_deviceFrag != null) {
+                        setFragment(_deviceFrag);
+                    }
                     return true;
-                case R.id.navigation_notifications:
-//                mTextMessage.setText(R.string.title_notifications);
+                case R.id.nav_settings:
+                    // TODO: 17/06/2017 Settings
                     return true;
             }
             return false;
         });
+
+        setState(STATE_LOADING);
 
         Platform.initialize(
             getApplicationContext(),
@@ -76,8 +82,8 @@ public class MainActivity extends AppCompatActivity implements
             public void onDone() {
                 Log.d("P", "Platform done");
 
-                if (_deviceFrag == null) {
-                    _deviceFrag = DeviceListFragment.newInstance(2);
+                if (_deviceListFrag == null) {
+                    _deviceListFrag = DeviceListFragment.newInstance(2);
                 }
 
                 setState(STATE_DEVICES);
@@ -93,8 +99,6 @@ public class MainActivity extends AppCompatActivity implements
                 }
             }
         });
-
-        setState(STATE_LOADING);
     }
 
     @Override
@@ -112,7 +116,7 @@ public class MainActivity extends AppCompatActivity implements
     public void OnDeviceSelected(RemoteSystem device) {
         Log.d("TEST", device.getDisplayName());
 
-        setFragment(DeviceFragment.newInstance(device));
+        _deviceFrag = DeviceFragment.newInstance(device);
         setState(STATE_DEVICE_VIEW);
         setNavSelected(NAV_DEVICE);
         setNavDevice(device);
@@ -143,7 +147,8 @@ public class MainActivity extends AppCompatActivity implements
                 .getMenu()
                 .findItem(NAV_DEVICE)
                 .setTitle(device.getDisplayName())
-                .setIcon(DeviceStorage.getDrawableId(device));
+                .setIcon(DeviceStorage.getDrawableId(device))
+                .setEnabled(true);
         });
     }
 
@@ -169,7 +174,7 @@ public class MainActivity extends AppCompatActivity implements
                 break;
             case STATE_DEVICES:
                 // TODO: 16/06/2017 Decide column count more intelligently
-                setFragment(_deviceFrag);
+                setFragment(_deviceListFrag);
                 setNavVisible(true);
                 break;
             case STATE_LOADING:
@@ -177,6 +182,7 @@ public class MainActivity extends AppCompatActivity implements
                 setNavVisible(false);
                 break;
             case STATE_DEVICE_VIEW:
+                setFragment(_deviceFrag);
                 setNavVisible(true);
                 break;
             default:
