@@ -8,6 +8,7 @@
 
     <string name="share_title">Launch with Mars</string>
     <string name="send_success">Sent %s to %s</string>
+    <string name="send_success_no_title">Sent to %s</string>
     <string name="send_error">Unable to send to %s</string>
     <string name="send_choose_destination">Select device</string>
 

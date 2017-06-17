@@ -99,7 +99,13 @@ public class LaunchUriActivity extends Activity implements DeviceListFragment.On
             RemoteLauncher.LaunchUriAsync(connReq, url, status -> {
                 if (status == RemoteLaunchUriStatus.SUCCESS) {
                     runOnUiThread(() -> {
-                        String message = getString(R.string.send_success, pageName, device.getDisplayName());
+                        String message;
+                        if (pageName == null) {
+                            message = getString(R.string.send_success_no_title, device.getDisplayName());
+                        } else {
+                            message = getString(R.string.send_success, pageName, device.getDisplayName());
+                        }
+                        
                         Toast
                             .makeText(this, message, Toast.LENGTH_LONG)
                             .show();
@@ -112,11 +118,11 @@ public class LaunchUriActivity extends Activity implements DeviceListFragment.On
                             .show();
                     });
                 }
+
+                finish();
             });
         } catch (ConnectedDevicesException ex) {
             Log.e("CDE", ex.getLocalizedMessage());
         }
-
-        finish();
     }
 }
