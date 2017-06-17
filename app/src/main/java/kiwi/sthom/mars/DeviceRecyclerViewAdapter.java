@@ -4,6 +4,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.microsoft.connecteddevices.RemoteSystem;
@@ -35,15 +36,18 @@ public class DeviceRecyclerViewAdapter extends RecyclerView.Adapter<DeviceRecycl
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
-        holder.mItem = _devices.get(position);
-        holder.mIdView.setText(_devices.get(position).getDisplayName());
-        holder.mContentView.setText(_devices.get(position).getKind().getValue());
+        RemoteSystem device = _devices.get(position);
 
-        holder.mView.setOnClickListener((View v) -> {
+        holder.item = device;
+        holder.nameView.setText(device.getDisplayName());
+        holder.typeView.setText(device.getKind().getValue());
+        holder.imageView.setImageResource(DeviceStorage.getDrawableId(device));
+
+        holder.root.setOnClickListener((View v) -> {
             if (null != _listener) {
                 // Notify the active callbacks interface (the activity, if the
                 // fragment is attached to one) that an item has been selected.
-                _listener.OnDeviceSelected(holder.mItem);
+                _listener.OnDeviceSelected(holder.item);
             }
         });
     }
@@ -62,21 +66,23 @@ public class DeviceRecyclerViewAdapter extends RecyclerView.Adapter<DeviceRecycl
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
-        public final View mView;
-        public final TextView mIdView;
-        public final TextView mContentView;
-        public RemoteSystem mItem;
+        final View root;
+        final TextView nameView;
+        final TextView typeView;
+        final ImageView imageView;
+        RemoteSystem item;
 
-        public ViewHolder(View view) {
+        ViewHolder(View view) {
             super(view);
-            mView = view;
-            mIdView = (TextView) view.findViewById(R.id.id);
-            mContentView = (TextView) view.findViewById(R.id.content);
+            root = view;
+            nameView = view.findViewById(R.id.device_name);
+            typeView = view.findViewById(R.id.device_type);
+            imageView = view.findViewById(R.id.device_icon);
         }
 
         @Override
         public String toString() {
-            return super.toString() + " '" + mContentView.getText() + "'";
+            return super.toString() + " '" + typeView.getText() + "'";
         }
     }
 }
