@@ -18,6 +18,14 @@
 
     <string name="prefs_category_account">Account</string>
     <string name="prefs_sign_out">Sign Out</string>
+    <string name="prefs_sing_out_dialog_title">Clear data</string>
+    <string name="prefs_sign_out_dialog_content">The current version of the
+        <i>Connected Devices API</i> used by Mars is still in beta,
+        and does not have a way to sign out. To remove your Microsoft account
+        from Mars, you need to clear the app\'s data in the Settings app.
+    </string>
+    <string name="prefs_sign_out_dialog_action">Settings App</string>
+    <string name="prefs_sign_out_dialog_cancel">Cancel</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
