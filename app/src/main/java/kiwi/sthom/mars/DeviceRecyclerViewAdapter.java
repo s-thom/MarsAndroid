@@ -56,39 +56,6 @@ public class DeviceRecyclerViewAdapter extends RecyclerView.Adapter<DeviceRecycl
         return _devices.size();
     }
 
-    void addDevice(RemoteSystem device) {
-        _devices.add(device);
-        notifyDataSetChanged();
-    }
-
-    void removeDevice(String id) {
-        RemoteSystem toRemove = null;
-        for (RemoteSystem device : _devices) {
-            if (device.getId() == id) {
-                toRemove = device;
-                break;
-            }
-        }
-        if (toRemove != null) {
-            _devices.remove(toRemove);
-            notifyDataSetChanged();
-        }
-    }
-
-    void updateDevice(RemoteSystem device) {
-        int index = -1;
-        for (RemoteSystem d : _devices) {
-            if (d.getId().equals(device.getId())) {
-                index = _devices.indexOf(d);
-                break;
-            }
-        }
-        if (index != -1) {
-            _devices.set(index, device);
-            notifyItemChanged(index);
-        }
-    }
-
     void setDevices(List<RemoteSystem> devices) {
         _devices = devices;
         notifyDataSetChanged();
