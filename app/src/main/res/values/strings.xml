@@ -12,6 +12,10 @@
     <string name="send_error">Unable to send to %s</string>
     <string name="send_choose_destination">Select device</string>
 
+    <string name="nav_device_list">Devices</string>
+    <string name="nav_device">Device</string>
+    <string name="nav_settings">Settings</string>
+
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="title_activity_launch_uri">Launch with Mars</string>
