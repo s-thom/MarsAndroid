@@ -1,4 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory
+        android:title="@string/prefs_category_account"
+        android:key="prefs_category_account">
 
+        <Preference
+            android:title="@string/prefs_sign_out"
+            android:key="prefs_sign_out">
+            <!-- TODO: Start reset activity -->
+        </Preference>
+
+    </PreferenceCategory>
 </PreferenceScreen>

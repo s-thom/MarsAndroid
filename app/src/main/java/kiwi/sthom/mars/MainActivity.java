@@ -25,6 +25,7 @@ public class MainActivity extends AppCompatActivity implements
     private static final int STATE_DEVICES = 46;
     private static final int STATE_LOADING = 963;
     private static final int STATE_DEVICE_VIEW = 568;
+    private static final int STATE_SETTINGS = 592;
 
     private static final int NAV_DEVICES = R.id.nav_device_list;
     private static final int NAV_DEVICE = R.id.nav_device;
@@ -46,15 +47,15 @@ public class MainActivity extends AppCompatActivity implements
         navigation.setOnNavigationItemSelectedListener((@NonNull MenuItem item) -> {
             switch (item.getItemId()) {
                 case R.id.nav_device_list:
-                    setFragment(_deviceListFrag);
+                    setState(STATE_DEVICES);
                     return true;
                 case R.id.nav_device:
                     if (_deviceFrag != null) {
-                        setFragment(_deviceFrag);
+                        setState(STATE_DEVICE_VIEW);
                     }
                     return true;
                 case R.id.nav_settings:
-                    // TODO: 17/06/2017 Settings
+                    setState(STATE_SETTINGS);
                     return true;
             }
             return false;
@@ -186,6 +187,10 @@ public class MainActivity extends AppCompatActivity implements
                 break;
             case STATE_DEVICE_VIEW:
                 setFragment(_deviceFrag);
+                setNavVisible(true);
+                break;
+            case STATE_SETTINGS:
+                setFragment(SettingsFragment.newInstance());
                 setNavVisible(true);
                 break;
             default:
