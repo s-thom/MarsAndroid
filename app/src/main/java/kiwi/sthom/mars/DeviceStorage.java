@@ -38,7 +38,20 @@ class DeviceStorage {
         return new ArrayList<>(_devices.values());
     }
 
-    interface OnDevicesUpdatedListener {
-        void onDevicesUpdated(List<RemoteSystem> devices);
+    static int getDrawableId(RemoteSystem device) {
+        switch (device.getKind()) {
+            case DESKTOP:
+                return R.drawable.ic_desktop_windows_black_24dp;
+            case PHONE:
+                return R.drawable.ic_smartphone_black_24dp;
+            case XBOX:
+                return R.drawable.ic_xbox_black_24dp;
+            case HUB:
+            case HOLOGRAPHIC:
+                return R.drawable.ic_devices_other_black_24dp;
+            case UNKNOWN:
+            default:
+                return R.drawable.ic_help_circle_black_24dp;
+        }
     }
 }

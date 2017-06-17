@@ -26,6 +26,9 @@ public class MainActivity extends AppCompatActivity implements
     private static final int STATE_DEVICE_VIEW = 568;
 
     private DeviceListFragment _deviceFrag = null;
+    private static final int NAV_DEVICES = R.id.nav_device_list;
+    private static final int NAV_DEVICE = R.id.nav_device;
+    private static final int NAV_SETTINGS = R.id.nav_settings;
 
     private Platform.IAuthCodeHandler _authHandler = null;
 
@@ -111,16 +114,36 @@ public class MainActivity extends AppCompatActivity implements
 
         setFragment(DeviceFragment.newInstance(device));
         setState(STATE_DEVICE_VIEW);
+        setNavSelected(NAV_DEVICE);
+        setNavDevice(device);
     }
 
     private void setNavVisible(boolean visibility) {
         runOnUiThread(() -> {
-            View nav = findViewById(R.id.main_nav);
+            BottomNavigationView nav = findViewById(R.id.main_nav);
             if (visibility) {
                 nav.setVisibility(View.VISIBLE);
             } else {
                 nav.setVisibility(View.GONE);
             }
+        });
+    }
+
+    private void setNavSelected(int item) {
+        runOnUiThread(() -> {
+            BottomNavigationView nav = findViewById(R.id.main_nav);
+            nav.setSelectedItemId(item);
+        });
+    }
+
+    private void setNavDevice(RemoteSystem device) {
+        runOnUiThread(() -> {
+            BottomNavigationView nav = findViewById(R.id.main_nav);
+            nav
+                .getMenu()
+                .findItem(NAV_DEVICE)
+                .setTitle(device.getDisplayName())
+                .setIcon(DeviceStorage.getDrawableId(device));
         });
     }
 
