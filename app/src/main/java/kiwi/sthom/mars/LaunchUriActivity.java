@@ -105,7 +105,7 @@ public class LaunchUriActivity extends Activity implements DeviceListFragment.On
                         } else {
                             message = getString(R.string.send_success, pageName, device.getDisplayName());
                         }
-                        
+
                         Toast
                             .makeText(this, message, Toast.LENGTH_LONG)
                             .show();
