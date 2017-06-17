@@ -89,6 +89,11 @@ public class DeviceRecyclerViewAdapter extends RecyclerView.Adapter<DeviceRecycl
         }
     }
 
+    void setDevices(List<RemoteSystem> devices) {
+        _devices = devices;
+        notifyDataSetChanged();
+    }
+
     public class ViewHolder extends RecyclerView.ViewHolder {
         public final View mView;
         public final TextView mIdView;

@@ -37,4 +37,8 @@ class DeviceStorage {
     static List<RemoteSystem> getAll() {
         return new ArrayList<>(_devices.values());
     }
+
+    interface OnDevicesUpdatedListener {
+        void onDevicesUpdated(List<RemoteSystem> devices);
+    }
 }
