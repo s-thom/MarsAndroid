@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:name="kiwi.sthom.mars.DeviceListFragment"
+    tools:context="kiwi.sthom.mars.DeviceListFragment"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/text_margin"
+        android:text="@string/device_list_title"
+        android:textAppearance="@style/TextAppearance.AppCompat.Title"/>
+
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/device_list_swiper"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            app:layoutManager="LinearLayoutManager"
+            tools:listitem="@layout/list_item_device"/>
+
+    </android.support.v4.widget.SwipeRefreshLayout>
+
+</LinearLayout>
+
+
